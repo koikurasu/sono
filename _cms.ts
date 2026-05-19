@@ -43,37 +43,72 @@ const image_format_fields: any[] = [
 ];
 
 cms.document({
-  name: "site_settings",
-  label: "Site settings",
-  description: "Configure the site name and description",
-  store: "src:_data.yml",
+  name: "settings",
+  label: "Settings",
+  description: "Configure site metadata and gallery settings",
+  store: "src:_data.json",
   fields: [
-    "lang: text",
-    "site: text",
-    "description: textarea",
+    {
+      name: "site",
+      label: "Site title",
+      type: "text",
+      description: "The name/title of your image gallery site.",
+    },
+    {
+      name: "description",
+      label: "Site description",
+      type: "textarea",
+      description:
+        "A short description of the site, used in search engine meta tags.",
+    },
+    {
+      name: "icon",
+      label: "Site icon / favicon",
+      type: "file",
+      description:
+        "The main site icon or favicon (typically a .svg, .png, or .ico file).",
+    },
+    {
+      name: "lang",
+      label: "Language",
+      type: "text",
+      description:
+        "The primary language of the site (e.g. 'en', 'es', 'fr'). Used for standard HTML lang attributes.",
+    },
     {
       name: "metas",
       type: "object",
+      label: "SEO & Social Metadata",
+      description:
+        "Metadata fields for SEO, Twitter cards, Fediverse, and social sharing.",
       fields: [
         "site: hidden",
         "description: hidden",
-        "twitter: text",
-        "fediverse: text",
-        "icon: file",
+        {
+          name: "twitter",
+          label: "Twitter username",
+          type: "text",
+          description:
+            "Your Twitter/X handle (including the @ symbol) for card attribution.",
+        },
+        {
+          name: "fediverse",
+          label: "Fediverse address",
+          type: "text",
+          description:
+            "Your Fediverse/Mastodon handle (e.g., @user@instance.social) for attribution.",
+        },
+        "icon: hidden",
         "lang: hidden",
-        "generator: checkbox",
+        {
+          name: "generator",
+          label: "Include generator tag",
+          type: "checkbox",
+          description:
+            "Toggle showing that the site was generated using Lume in the page source metadata.",
+        },
       ],
     },
-  ],
-});
-
-cms.document({
-  name: "gallery_settings",
-  label: "Gallery settings",
-  description:
-    "Configure the gallery layout, thumbnail sizes, and image formats",
-  store: "src:_data.json",
-  fields: [
     {
       name: "base_url",
       label: "Base URL",

@@ -47,8 +47,7 @@ You can add any additional columns you like, which will be used to filter the ga
 ### 3. Configure the theme
 
 Your site's configuration is managed through a few key files:
-- `src/_data.yml` for site metadata (title, description, language, social links).
-- `src/_data.json` for gallery settings (layout style, image sizing, and output formats).
+- `src/_data.json` for site metadata (title, description, language) and gallery settings (layout style, image sizing, and output formats).
 - `src/_includes/sass/_gallery_variables.scss` for gallery-specific dimensions and styling.
 - `src/_includes/sass/_theme_variables.scss` for site-wide colors and typography.
 

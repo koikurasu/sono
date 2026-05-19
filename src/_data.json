@@ -1,4 +1,15 @@
 {
+  "lang": "en",
+  "site": "Soño",
+  "description": "An image gallery theme for Lume",
+  "icon": "/assets/images/other/favicon.svg",
+  "metas": {
+    "site": "=site",
+    "description": "=description",
+    "icon": "=icon",
+    "lang": "=lang",
+    "generator": true
+  },
   "base_url": "https://koikurasu.github.io/sono",
   "gallery_style": "masonry-js",
   "image_fit": "contain",
