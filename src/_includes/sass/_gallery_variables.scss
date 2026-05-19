@@ -19,6 +19,9 @@ $gallery-padding: 50px !default;
 // padding around the entire gallery container on mobile
 $gallery-padding-mobile: $gallery-padding !default;
 
+// border radius of gallery images
+$gallery-image-border-radius: 0px !default;
+
 // how much space should be between the images when image_fit is "contain" and gallery_style is "fixed-height"
 // accepts any value that justify-content accepts
 // ex: flex-start, center, flex-end, space-between, space-around, space-evenly
@@ -27,7 +30,7 @@ $gallery-justify-content: flex-start !default;
 // scale factor applied to an image on hover (set to 1 to disable).
 $gallery-hover-scale: 1 !default;
 
-// opacity applied to images.
+// opacity applied to images
 $gallery-image-opacity: 1 !default;
 $gallery-hover-image-opacity: 0.9 !default;
 
@@ -35,6 +38,6 @@ $gallery-hover-image-opacity: 0.9 !default;
 $gallery-image-filter: none !default;
 $gallery-hover-image-filter: contrast(110%) !default;
 
-// duration + easing of the hover transition.
+// duration + easing of the hover transition
 $gallery-hover-transition-duration: 200ms !default;
 $gallery-hover-transition-easing: ease !default;
