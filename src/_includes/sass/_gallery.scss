@@ -45,6 +45,11 @@
       a {
         color: inherit;
       }
+
+      &.figcaption-hidden {
+        opacity: 0 !important;
+        transform: translateY(0.5rem) !important;
+      }
     }
   }
 

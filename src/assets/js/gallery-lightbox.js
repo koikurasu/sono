@@ -35,4 +35,49 @@ const _captionPlugin = new PhotoSwipeDynamicCaption(lightbox, {
   },
 });
 
+const hoverCaptionsEnabled = galleryEl &&
+  galleryEl.getAttribute("data-hover-captions") === "true";
+
+if (hoverCaptionsEnabled) {
+  let firstElWithCaption;
+  let lastElWithCaption;
+
+  const hideCaption = (el) => {
+    const figcaption = el.closest(".gallery-item")?.querySelector("figcaption");
+    if (figcaption) {
+      figcaption.classList.add("figcaption-hidden");
+    }
+  };
+
+  const showCaption = (el) => {
+    const figcaption = el.closest(".gallery-item")?.querySelector("figcaption");
+    if (figcaption) {
+      figcaption.classList.remove("figcaption-hidden");
+    }
+  };
+
+  lightbox.on("afterInit", () => {
+    firstElWithCaption = lightbox.pswp.currSlide.data.element;
+    if (firstElWithCaption) {
+      hideCaption(firstElWithCaption);
+    }
+  });
+
+  lightbox.on("close", () => {
+    lastElWithCaption = lightbox.pswp.currSlide.data.element;
+    if (firstElWithCaption && lastElWithCaption !== firstElWithCaption) {
+      showCaption(firstElWithCaption);
+    }
+  });
+
+  lightbox.on("destroy", () => {
+    if (lastElWithCaption) {
+      showCaption(lastElWithCaption);
+    }
+    galleryEl.querySelectorAll("figcaption.figcaption-hidden").forEach((el) => {
+      el.classList.remove("figcaption-hidden");
+    });
+  });
+}
+
 lightbox.init();
