@@ -45,7 +45,7 @@
             <img
               src="/assets/images/gallery/{{ name }}-thumbnail.{{ thumb_fallback }}"
               srcset="/assets/images/gallery/{{ name }}-thumbnail@2x.{{ thumb_fallback }} 2x"
-              alt="{{ image.alt }}"
+              {{ if image.alt }}alt="{{ image.alt }}"{{ /if }}
               loading="lazy"
               decoding="async"
               image-size

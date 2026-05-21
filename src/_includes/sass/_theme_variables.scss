@@ -1,12 +1,24 @@
 // max width of non-gallery page content (e.g. about page)
 $page-max-width: 62rem !default;
 
+// background color for the page
+$page-bg: light-dark(#ffffff, #111111) !default;
+
+// primary text color
+$page-text: light-dark(#333333, #e4e4e4) !default;
+
+// link color
+$link-color: var(--page-text) !default;
+
+// base font family
+$font-family-base: ("Aspekta Variable", system-ui, sans-serif) !default;
+
 :root {
   color-scheme: light dark;
 
-  --page-bg: light-dark(#ffffff, #111111);
-  --page-text: light-dark(#333333, #e4e4e4);
-  --link-color: var(--page-text);
-  --font-family-base: "Aspekta Variable", system-ui, sans-serif;
+  --page-bg: #{$page-bg};
+  --page-text: #{$page-text};
+  --link-color: #{$link-color};
+  --font-family-base: #{$font-family-base};
   --page-max-width: #{$page-max-width};
 }
