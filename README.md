@@ -2,6 +2,8 @@
 
 An image gallery theme for [Lume](https://lume.land/).
 
+Detailed setup guides, manual configuration references, and troubleshooting are available in the [wiki](https://github.com/koikurasu/sono/wiki).
+
 ## Features
 
 - **Spreadsheet-driven** – Manage your entire gallery—images, dates, and custom metadata—from a single spreadsheet.
@@ -51,7 +53,7 @@ Your site's configuration is managed through a few key files:
 - `src/_includes/sass/_gallery_variables.scss` for gallery-specific dimensions and styling.
 - `src/_includes/sass/_theme_variables.scss` for site-wide colors and typography.
 
-The easiest way to configure your site is to use the **LumeCMS** interface. Start the development server (see step 4) and navigate to `http://localhost:3000/admin`. The CMS provides a user-friendly interface to edit all metadata, gallery settings, and CSS variables directly in your browser, with explanations for each option.
+The easiest way to configure your site is to use the **LumeCMS** interface. Start the development server (see step 4) and navigate to `http://localhost:3000/admin`. The CMS provides a user-friendly interface to edit all metadata, gallery settings, and CSS variables directly in your browser, with explanations for each option. For manual configuration details without the CMS, refer to the [GitHub Wiki](https://github.com/koikurasu/sono/wiki).
 
 ### 4. Build or serve
 

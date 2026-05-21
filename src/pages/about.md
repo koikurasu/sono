@@ -110,7 +110,7 @@ cd sono
 deno task serve
 ```
 
-Full setup instructions, configuration reference, and deployment guides are in the [README](https://github.com/koikurasu/sono#readme).
+Full setup instructions, configuration reference, and deployment guides are in the [README](https://github.com/koikurasu/sono#readme) and the [wiki](https://github.com/koikurasu/sono/wiki).
 
 ## Licenses
 
