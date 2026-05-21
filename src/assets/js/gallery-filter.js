@@ -7,36 +7,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const items = [...gallery.querySelectorAll(".gallery-item")];
   if (items.length === 0) return;
 
-  // -------------------------------------------------------------------------
-  // Global Empty State (inserted after gallery)
-  // -------------------------------------------------------------------------
-
+  // global empty state (inserted after gallery)
   const emptyStateEl = document.createElement("div");
   emptyStateEl.className = "gallery-empty-state";
   emptyStateEl.textContent = "No images match";
   emptyStateEl.hidden = true;
   gallery.parentNode.insertBefore(emptyStateEl, gallery.nextSibling);
 
-  // -------------------------------------------------------------------------
-  // Helpers
-  // -------------------------------------------------------------------------
-
-  // dataset keys are camelCase; convert back to kebab for display
+  // helper functions for name conversion
   const toKebab = (camel) =>
     camel.replace(/([A-Z])/g, (m) => `-${m.toLowerCase()}`);
 
-  // Convert slug to Display Label (Title Case)
   const toLabel = (slug) => {
     return toKebab(slug)
       .replace(/-/g, " ")
       .replace(/\b\w/g, (c) => c.toUpperCase());
   };
 
-  // -------------------------------------------------------------------------
-  // Discover categories + value counts from DOM
-  // categoryMap: Map<camelCaseKey, Map<valueSlug, count>>
-  // -------------------------------------------------------------------------
-
+  // discover categories + value counts from DOM
   const categoryMap = new Map();
   let minYear = Infinity;
   let maxYear = -Infinity;
@@ -51,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     for (const [key, val] of Object.entries(item.dataset)) {
-      // Skip internal Macy.js attribute, year, and empty values
+      // skip internal Macy.js attribute, year, and empty values
       if (key === "macyComplete" || key === "year" || !val) continue;
 
       if (!categoryMap.has(key)) categoryMap.set(key, new Map());
@@ -63,18 +51,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // if there's nothing to filter by, exit, otherwise
+  // show the filter menu and button
   const hasYears = minYear !== Infinity && maxYear !== -Infinity;
-
   if (categoryMap.size === 0 && !hasYears) return;
 
   const trigger = document.getElementById("gallery-filter-trigger");
   if (trigger) trigger.hidden = false;
   panel.hidden = false;
 
-  // -------------------------------------------------------------------------
-  // State
-  // -------------------------------------------------------------------------
-
+  // build state object to hold the current filter settings
   const state = {
     globalLogic: "and",
     yearRange: hasYears ? { min: minYear, max: maxYear } : null,
@@ -85,389 +71,13 @@ document.addEventListener("DOMContentLoaded", () => {
     ),
   };
 
-  // -------------------------------------------------------------------------
-  // Filter logic
-  // -------------------------------------------------------------------------
-
-  function runFilter() {
-    const activeCategories = Object.entries(state.categories).filter(
-      ([, { selected }]) => selected.size > 0,
-    );
-
-    const toShow = [];
-    const toHide = [];
-
-    for (const item of items) {
-      let shouldShow = true;
-
-      if (hasYears) {
-        const itemYear = parseInt(item.dataset.year, 10);
-        const isFullRange = state.yearRange.min === minYear &&
-          state.yearRange.max === maxYear;
-        const yearPasses = isFullRange
-          ? true
-          : (!isNaN(itemYear) && itemYear >= state.yearRange.min &&
-            itemYear <= state.yearRange.max);
-        shouldShow = yearPasses;
-      }
-
-      if (shouldShow && activeCategories.length > 0) {
-        const results = activeCategories.map(([cat, { logic, selected }]) => {
-          const raw = item.dataset[cat] ?? "";
-          const vals = new Set(raw.trim().split(/\s+/).filter(Boolean));
-          return logic === "and"
-            ? [...selected].every((v) => vals.has(v))
-            : [...selected].some((v) => vals.has(v));
-        });
-
-        const catShouldShow = state.globalLogic === "and"
-          ? results.every(Boolean)
-          : results.some(Boolean);
-
-        shouldShow = catShouldShow;
-      }
-
-      if (shouldShow && item.hidden) toShow.push(item);
-      else if (!shouldShow && !item.hidden) toHide.push(item);
-    }
-
-    const visibleCount = items.filter(
-      (item) => !toHide.includes(item) && !item.hidden || toShow.includes(item),
-    ).length;
-
-    updateResultCount(visibleCount);
-
-    // FLIP — snapshot "first" positions of items staying visible
-    const stayers = items.filter(
-      (item) =>
-        !item.hidden && !toHide.includes(item) && !toShow.includes(item),
-    );
-    const firstPositions = new Map(
-      stayers.map((item) => [item, item.getBoundingClientRect()]),
-    );
-
-    const isYearModified = hasYears &&
-      (state.yearRange.min !== minYear || state.yearRange.max !== maxYear);
-    const shouldShowEmpty = visibleCount === 0 &&
-      (activeCategories.length > 0 || isYearModified);
-
-    // Step 1: fade out items being hidden
-    toHide.forEach((item) => item.classList.add("is-filter-hiding"));
-
-    if (!shouldShowEmpty && emptyStateEl.classList.contains("is-visible")) {
-      emptyStateEl.classList.remove("is-visible");
-    }
-
-    const DURATION = 220;
-
-    setTimeout(() => {
-      // Step 2: actually hide them & remove animation class
-      toHide.forEach((item) => {
-        item.hidden = true;
-        item.classList.remove("is-filter-hiding");
-      });
-
-      if (!shouldShowEmpty) {
-        emptyStateEl.hidden = true;
-      }
-
-      // Step 3: show items, initially invisible
-      toShow.forEach((item) => {
-        item.hidden = false;
-        item.classList.add("is-filter-showing");
-      });
-
-      if (shouldShowEmpty) {
-        emptyStateEl.hidden = false;
-      }
-
-      // Step 4: recalculate layout — Macy sets new top/left on all visible items
-      globalThis.macyInstance?.recalculate(true);
-
-      // FLIP — compute deltas and apply inverted transforms instantly (no transition)
-      const isFixedHeight = gallery.dataset.galleryStyle === "fixed-height";
-
-      stayers.forEach((item) => {
-        const first = firstPositions.get(item);
-        const last = item.getBoundingClientRect();
-        const dx = first.left - last.left;
-        const dy = first.top - last.top;
-
-        if (isFixedHeight) {
-          // For fixed-height+cover, scale() would warp the already-reflowed
-          // object-fit: cover pixels. Use clip-path to mask the size change
-          // without distorting image content.
-          const clipRight = Math.max(0, last.width - first.width);
-          const clipBottom = Math.max(0, last.height - first.height);
-
-          if (
-            Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5 || clipRight > 1 ||
-            clipBottom > 1
-          ) {
-            item.style.transition = "none";
-            item.style.transform = `translate(${dx}px, ${dy}px)`;
-            item.style.clipPath =
-              `inset(0 ${clipRight}px ${clipBottom}px 0 round 0px)`;
-          }
-        } else {
-          const sx = first.width / (last.width || 1);
-          const sy = first.height / (last.height || 1);
-
-          if (
-            Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5 ||
-            Math.abs(sx - 1) > 0.01 || Math.abs(sy - 1) > 0.01
-          ) {
-            item.style.transition = "none";
-            item.style.transformOrigin = "top left";
-            item.style.transform =
-              `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
-          }
-        }
-      });
-
-      // Step 5: play — release transforms & fade-in new items simultaneously
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          stayers.forEach((item) => {
-            if (item.style.transform || item.style.clipPath) {
-              item.style.transition = "";
-              item.style.transform = "";
-              item.style.clipPath = "";
-            }
-          });
-          toShow.forEach((item) => item.classList.remove("is-filter-showing"));
-
-          if (shouldShowEmpty) {
-            emptyStateEl.classList.add("is-visible");
-          }
-
-          setTimeout(() => {
-            stayers.forEach((item) => item.style.transformOrigin = "");
-          }, 300);
-        });
-      });
-    }, DURATION);
-  }
-
-  // -------------------------------------------------------------------------
-  // UI helpers
-  // -------------------------------------------------------------------------
-
-  function updateResultCount(visible) {
-    const el = panel.querySelector(".filter-result-count");
-    if (el) el.textContent = `${visible} / ${items.length}`;
-  }
-
-  function syncGlobalLogicButtons() {
-    panel.querySelectorAll("[data-global-logic]").forEach((btn) => {
-      btn.classList.toggle(
-        "is-active",
-        btn.dataset.globalLogic === state.globalLogic,
-      );
-    });
-  }
-
-  function syncCatLogicButtons(cat) {
-    panel.querySelectorAll(`[data-cat="${cat}"][data-cat-logic]`).forEach(
-      (btn) => {
-        btn.classList.toggle(
-          "is-active",
-          btn.dataset.catLogic === state.categories[cat].logic,
-        );
-      },
-    );
-  }
-
-  function positionDropdown(area, dropdown) {
-    const rect = area.getBoundingClientRect();
-    const vv = globalThis.visualViewport;
-    const vh = vv ? vv.height : globalThis.innerHeight;
-    const offsetTop = vv ? vv.offsetTop : 0;
-    const offsetLeft = vv ? vv.offsetLeft : 0;
-
-    const naturalHeight = dropdown.scrollHeight || 250;
-    const spaceBelow = vh - rect.bottom;
-    const spaceAbove = rect.top;
-
-    dropdown.style.position = "fixed";
-    dropdown.style.left = (rect.left + offsetLeft) + "px";
-    dropdown.style.width = rect.width + "px";
-    dropdown.style.transform = "none";
-    dropdown.style.margin = "0";
-    dropdown.style.zIndex = "9999";
-
-    // Bias towards dropping down, only drop up if significantly more space above
-    let isDropUp = false;
-    if (spaceBelow < naturalHeight + 16 && spaceAbove > spaceBelow + 40) {
-      isDropUp = true;
-    }
-
-    if (isDropUp) {
-      const maxH = Math.min(naturalHeight, Math.max(0, spaceAbove - 16));
-      dropdown.style.maxHeight = maxH + "px";
-      dropdown.style.top = (rect.top + offsetTop - maxH - 8) + "px";
-      dropdown.style.bottom = "auto";
-    } else {
-      const maxH = Math.min(naturalHeight, Math.max(0, spaceBelow - 16));
-      dropdown.style.maxHeight = maxH + "px";
-      dropdown.style.top = (rect.bottom + offsetTop + 8) + "px";
-      dropdown.style.bottom = "auto";
-    }
-  }
-
-  function updateDropdownPositions() {
-    if (isAnchorSupported) return;
-    const openArea = panel.querySelector(".filter-field-input-area.is-open");
-    if (openArea) {
-      const cat = openArea.dataset.fieldArea;
-      const dropdown = panel.querySelector(`[data-field-dropdown="${cat}"]`);
-      if (dropdown && dropdown.classList.contains("is-open")) {
-        positionDropdown(openArea, dropdown);
-      }
-    }
-  }
-
-  function openDropdown(cat) {
-    const area = panel.querySelector(`[data-field-area="${cat}"]`);
-    if (area) area.classList.add("is-open");
-    const dropdown = panel.querySelector(`[data-field-dropdown="${cat}"]`);
-
-    if (dropdown && !dropdown.classList.contains("is-open")) {
-      if (dropdown.showPopover) {
-        dropdown.showPopover();
-      }
-
-      if (!isAnchorSupported) {
-        positionDropdown(area, dropdown);
-      }
-
-      dropdown.classList.add("is-open");
-    }
-  }
-
-  function closeDropdown(cat) {
-    panel.querySelector(`[data-field-area="${cat}"]`)?.classList.remove(
-      "is-open",
-    );
-    const dropdown = panel.querySelector(`[data-field-dropdown="${cat}"]`);
-    if (dropdown && dropdown.classList.contains("is-open")) {
-      if (dropdown.hidePopover) {
-        dropdown.hidePopover();
-      }
-      if (!isAnchorSupported) {
-        // Clear manually-set positioning styles
-        dropdown.style.cssText = "";
-      }
-      dropdown.classList.remove("is-open");
-    }
-  }
-
-  function closeAllDropdowns() {
-    for (const cat of categoryMap.keys()) closeDropdown(cat);
-  }
-
-  function applyDropdownTextFilter(cat, query) {
-    const q = query.toLowerCase();
-    panel.querySelectorAll(`[data-field-dropdown="${cat}"] li`).forEach(
-      (li) => {
-        li.hidden = q.length > 0 &&
-          !toLabel(li.dataset.value).toLowerCase().includes(q);
-      },
-    );
-    updateDropdownPositions();
-  }
-
-  // -------------------------------------------------------------------------
-  // Tag management
-  // -------------------------------------------------------------------------
-
-  function addTag(cat, value) {
-    state.categories[cat].selected.add(value);
-
-    const area = panel.querySelector(`[data-field-area="${cat}"]`);
-    const input = panel.querySelector(`[data-field-input="${cat}"]`);
-    const dropdown = panel.querySelector(`[data-field-dropdown="${cat}"]`);
-
-    // Remove option from dropdown
-    dropdown.querySelector(`li[data-value="${CSS.escape(value)}"]`)?.remove();
-
-    // Insert tag before the text input
-    const tag = document.createElement("span");
-    tag.className = "filter-tag";
-    tag.dataset.value = value;
-    tag.innerHTML = `${toLabel(value)} <button class="filter-tag-remove" ` +
-      `data-tag-cat="${cat}" data-tag-value="${value}" ` +
-      `aria-label="Remove ${toLabel(value)}">×</button>`;
-    area.insertBefore(tag, input);
-
-    input.value = "";
-    applyDropdownTextFilter(cat, "");
-    runFilter();
-  }
-
-  function removeTag(cat, value) {
-    state.categories[cat].selected.delete(value);
-
-    // Remove tag element
-    panel
-      .querySelector(
-        `[data-field-area="${cat}"] .filter-tag[data-value="${
-          CSS.escape(value)
-        }"]`,
-      )
-      ?.remove();
-
-    // Re-insert option into dropdown in sorted-by-count order
-    const dropdown = panel.querySelector(`[data-field-dropdown="${cat}"]`);
-    const counts = categoryMap.get(cat);
-    const count = counts.get(value) ?? 0;
-
-    const newLi = document.createElement("li");
-    newLi.dataset.value = value;
-    newLi.dataset.cat = cat;
-    newLi.innerHTML = `<span>${
-      toLabel(value)
-    }</span> <span class="val-count">${count}</span>`;
-
-    const lis = [...dropdown.querySelectorAll("li")];
-    const insertBefore = lis.find((li) =>
-      (counts.get(li.dataset.value) ?? 0) < count
-    );
-    insertBefore
-      ? dropdown.insertBefore(newLi, insertBefore)
-      : dropdown.appendChild(newLi);
-
-    // Re-apply text filter
-    const input = panel.querySelector(`[data-field-input="${cat}"]`);
-    applyDropdownTextFilter(cat, input?.value ?? "");
-
-    runFilter();
-  }
-
-  function resetAll() {
-    state.globalLogic = "and";
-    for (const cat of Object.keys(state.categories)) {
-      state.categories[cat].selected.clear();
-      state.categories[cat].logic = "or";
-    }
-    if (hasYears) {
-      state.yearRange.min = minYear;
-      state.yearRange.max = maxYear;
-    }
-    buildUI();
-    runFilter();
-  }
-
-  // -------------------------------------------------------------------------
-  // Build UI
-  // -------------------------------------------------------------------------
-
+  // build ui
   const isAnchorSupported = CSS.supports("anchor-name: --foo");
 
   function buildUI() {
     panel.innerHTML = "";
 
-    // --- Header ---
+    // header
     const header = document.createElement("div");
     header.className = "filter-panel-header";
     header.innerHTML = `
@@ -481,11 +91,11 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     panel.appendChild(header);
 
-    // --- Content Wrapper ---
+    // content wrapper
     const content = document.createElement("div");
     content.className = "filter-panel-content";
 
-    // --- Year Filter ---
+    // year filter
     if (hasYears) {
       const yearSection = document.createElement("div");
       yearSection.className = "filter-category filter-year-section";
@@ -510,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
       content.appendChild(yearSection);
     }
 
-    // --- Categories ---
+    // categories
     const categoriesEl = document.createElement("div");
     categoriesEl.className = "filter-categories";
 
@@ -646,12 +256,215 @@ document.addEventListener("DOMContentLoaded", () => {
     runFilter();
   }
 
-  // -------------------------------------------------------------------------
-  // Event listeners
-  // -------------------------------------------------------------------------
+  // ui helpers
+
+  function updateResultCount(visible) {
+    const el = panel.querySelector(".filter-result-count");
+    if (el) el.textContent = `${visible} / ${items.length}`;
+  }
+
+  function syncGlobalLogicButtons() {
+    panel.querySelectorAll("[data-global-logic]").forEach((btn) => {
+      btn.classList.toggle(
+        "is-active",
+        btn.dataset.globalLogic === state.globalLogic,
+      );
+    });
+  }
+
+  function syncCatLogicButtons(cat) {
+    panel.querySelectorAll(`[data-cat="${cat}"][data-cat-logic]`).forEach(
+      (btn) => {
+        btn.classList.toggle(
+          "is-active",
+          btn.dataset.catLogic === state.categories[cat].logic,
+        );
+      },
+    );
+  }
+
+  function positionDropdown(area, dropdown) {
+    const rect = area.getBoundingClientRect();
+    const vv = globalThis.visualViewport;
+    const vh = vv ? vv.height : globalThis.innerHeight;
+    const offsetTop = vv ? vv.offsetTop : 0;
+    const offsetLeft = vv ? vv.offsetLeft : 0;
+
+    const naturalHeight = dropdown.scrollHeight || 250;
+    const spaceBelow = vh - rect.bottom;
+    const spaceAbove = rect.top;
+
+    dropdown.style.position = "fixed";
+    dropdown.style.left = (rect.left + offsetLeft) + "px";
+    dropdown.style.width = rect.width + "px";
+    dropdown.style.transform = "none";
+    dropdown.style.margin = "0";
+    dropdown.style.zIndex = "9999";
+
+    // bias towards dropping down, only drop up if significantly more space above
+    let isDropUp = false;
+    if (spaceBelow < naturalHeight + 16 && spaceAbove > spaceBelow + 40) {
+      isDropUp = true;
+    }
+
+    if (isDropUp) {
+      const maxH = Math.min(naturalHeight, Math.max(0, spaceAbove - 16));
+      dropdown.style.maxHeight = maxH + "px";
+      dropdown.style.top = (rect.top + offsetTop - maxH - 8) + "px";
+      dropdown.style.bottom = "auto";
+    } else {
+      const maxH = Math.min(naturalHeight, Math.max(0, spaceBelow - 16));
+      dropdown.style.maxHeight = maxH + "px";
+      dropdown.style.top = (rect.bottom + offsetTop + 8) + "px";
+      dropdown.style.bottom = "auto";
+    }
+  }
+
+  function updateDropdownPositions() {
+    if (isAnchorSupported) return;
+    const openArea = panel.querySelector(".filter-field-input-area.is-open");
+    if (openArea) {
+      const cat = openArea.dataset.fieldArea;
+      const dropdown = panel.querySelector(`[data-field-dropdown="${cat}"]`);
+      if (dropdown && dropdown.classList.contains("is-open")) {
+        positionDropdown(openArea, dropdown);
+      }
+    }
+  }
+
+  function openDropdown(cat) {
+    const area = panel.querySelector(`[data-field-area="${cat}"]`);
+    if (area) area.classList.add("is-open");
+    const dropdown = panel.querySelector(`[data-field-dropdown="${cat}"]`);
+
+    if (dropdown && !dropdown.classList.contains("is-open")) {
+      if (dropdown.showPopover) {
+        dropdown.showPopover();
+      }
+
+      if (!isAnchorSupported) {
+        positionDropdown(area, dropdown);
+      }
+
+      dropdown.classList.add("is-open");
+    }
+  }
+
+  function closeDropdown(cat) {
+    panel.querySelector(`[data-field-area="${cat}"]`)?.classList.remove(
+      "is-open",
+    );
+    const dropdown = panel.querySelector(`[data-field-dropdown="${cat}"]`);
+    if (dropdown && dropdown.classList.contains("is-open")) {
+      if (dropdown.hidePopover) {
+        dropdown.hidePopover();
+      }
+      if (!isAnchorSupported) {
+        // clear manually-set positioning styles
+        dropdown.style.cssText = "";
+      }
+      dropdown.classList.remove("is-open");
+    }
+  }
+
+  function closeAllDropdowns() {
+    for (const cat of categoryMap.keys()) closeDropdown(cat);
+  }
+
+  function applyDropdownTextFilter(cat, query) {
+    const q = query.toLowerCase();
+    panel.querySelectorAll(`[data-field-dropdown="${cat}"] li`).forEach(
+      (li) => {
+        li.hidden = q.length > 0 &&
+          !toLabel(li.dataset.value).toLowerCase().includes(q);
+      },
+    );
+    updateDropdownPositions();
+  }
+
+  // tag management
+  
+  function addTag(cat, value) {
+    state.categories[cat].selected.add(value);
+
+    const area = panel.querySelector(`[data-field-area="${cat}"]`);
+    const input = panel.querySelector(`[data-field-input="${cat}"]`);
+    const dropdown = panel.querySelector(`[data-field-dropdown="${cat}"]`);
+
+    // remove option from dropdown
+    dropdown.querySelector(`li[data-value="${CSS.escape(value)}"]`)?.remove();
+
+    // insert tag before the text input
+    const tag = document.createElement("span");
+    tag.className = "filter-tag";
+    tag.dataset.value = value;
+    tag.innerHTML = `${toLabel(value)} <button class="filter-tag-remove" ` +
+      `data-tag-cat="${cat}" data-tag-value="${value}" ` +
+      `aria-label="Remove ${toLabel(value)}">×</button>`;
+    area.insertBefore(tag, input);
+
+    input.value = "";
+    applyDropdownTextFilter(cat, "");
+    runFilter();
+  }
+
+  function removeTag(cat, value) {
+    state.categories[cat].selected.delete(value);
+
+    // remove tag element
+    panel
+      .querySelector(
+        `[data-field-area="${cat}"] .filter-tag[data-value="${
+          CSS.escape(value)
+        }"]`,
+      )
+      ?.remove();
+
+    // re-insert option into dropdown in sorted-by-count order
+    const dropdown = panel.querySelector(`[data-field-dropdown="${cat}"]`);
+    const counts = categoryMap.get(cat);
+    const count = counts.get(value) ?? 0;
+
+    const newLi = document.createElement("li");
+    newLi.dataset.value = value;
+    newLi.dataset.cat = cat;
+    newLi.innerHTML = `<span>${
+      toLabel(value)
+    }</span> <span class="val-count">${count}</span>`;
+
+    const lis = [...dropdown.querySelectorAll("li")];
+    const insertBefore = lis.find((li) =>
+      (counts.get(li.dataset.value) ?? 0) < count
+    );
+    insertBefore
+      ? dropdown.insertBefore(newLi, insertBefore)
+      : dropdown.appendChild(newLi);
+
+    // re-apply text filter
+    const input = panel.querySelector(`[data-field-input="${cat}"]`);
+    applyDropdownTextFilter(cat, input?.value ?? "");
+
+    runFilter();
+  }
+
+  function resetAll() {
+    state.globalLogic = "and";
+    for (const cat of Object.keys(state.categories)) {
+      state.categories[cat].selected.clear();
+      state.categories[cat].logic = "or";
+    }
+    if (hasYears) {
+      state.yearRange.min = minYear;
+      state.yearRange.max = maxYear;
+    }
+    buildUI();
+    runFilter();
+  }
+
+  // event listeners
 
   function attachListeners() {
-    // --- Position updates for fallback ---
+    // position updates for fallback
     if (!isAnchorSupported) {
       panel.addEventListener("scroll", updateDropdownPositions);
       globalThis.visualViewport?.addEventListener(
@@ -664,9 +477,9 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
 
-    // --- Panel click delegation ---
+    // panel click delegation
     panel.addEventListener("click", (e) => {
-      // Global AND / OR
+      // global and/or
       const globalBtn = e.target.closest("[data-global-logic]");
       if (globalBtn) {
         state.globalLogic = globalBtn.dataset.globalLogic;
@@ -675,14 +488,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Global Reset button
+      // global reset button
       const globalResetBtn = e.target.closest("[data-global-reset]");
       if (globalResetBtn) {
         resetAll();
         return;
       }
 
-      // Per-category AND / OR
+      // per-category and/or
       const catLogicBtn = e.target.closest("[data-cat-logic]");
       if (catLogicBtn) {
         const cat = catLogicBtn.dataset.cat;
@@ -692,7 +505,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Reset button
+      // reset button
       const resetBtn = e.target.closest("[data-cat-reset]");
       if (resetBtn) {
         const cat = resetBtn.dataset.cat;
@@ -700,7 +513,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Reset Year
+      // reset year
       const resetYearBtn = e.target.closest("[data-year-reset]");
       if (resetYearBtn && hasYears) {
         state.yearRange.min = minYear;
@@ -714,21 +527,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Remove tag ×
+      // remove tag ×
       const tagRemove = e.target.closest("[data-tag-cat]");
       if (tagRemove) {
         removeTag(tagRemove.dataset.tagCat, tagRemove.dataset.tagValue);
         return;
       }
 
-      // Select dropdown option
+      // select dropdown option
       const li = e.target.closest("[data-field-dropdown] li");
       if (li && !li.hidden) {
         addTag(li.dataset.cat, li.dataset.value);
         return;
       }
 
-      // Click on field area → open dropdown (unless clicking the text input itself)
+      // click on field area → open dropdown (unless clicking the text input itself)
       const fieldArea = e.target.closest("[data-field-area]");
       if (
         fieldArea && !e.target.closest(".filter-type-input") &&
@@ -746,7 +559,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // --- Text input filtering ---
+    // text input filtering
     panel.addEventListener("input", (e) => {
       const input = e.target.closest("[data-field-input]");
       if (!input) return;
@@ -755,7 +568,7 @@ document.addEventListener("DOMContentLoaded", () => {
       applyDropdownTextFilter(cat, input.value);
     });
 
-    // --- Click on input opens dropdown ---
+    // click on input opens dropdown
     panel.addEventListener("focusin", (e) => {
       const input = e.target.closest("[data-field-input]");
       if (!input) return;
@@ -764,7 +577,7 @@ document.addEventListener("DOMContentLoaded", () => {
       openDropdown(cat);
     });
 
-    // --- Year Filter interactions ---
+    // year filter interactions
     if (hasYears) {
       panel.addEventListener("input", (e) => {
         if (e.target.classList.contains("year-range")) {
@@ -781,23 +594,205 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // --- Close dropdowns when clicking outside ---
+    // close dropdowns when clicking outside
     document.addEventListener("click", (e) => {
       const isInsidePanel = e.target.closest(".gallery-filter-panel");
       const isInsideDropdown = e.target.closest(".filter-dropdown");
       const isFieldTrigger = e.target.closest("[data-field-area]");
 
-      // Clicked completely outside the filter UI
+      // clicked completely outside the filter UI
       if (!isInsidePanel && !isInsideDropdown) {
         closeAllDropdowns();
         return;
       }
 
-      // Clicked inside the panel but not on a field area
+      // clicked inside the panel but not on a field area
       if (isInsidePanel && !isFieldTrigger && !isInsideDropdown) {
         closeAllDropdowns();
       }
     });
+  }
+
+  // filter logic
+
+  function runFilter() {
+    const activeCategories = Object.entries(state.categories).filter(
+      ([, { selected }]) => selected.size > 0,
+    );
+
+    const toShow = [];
+    const toHide = [];
+
+    for (const item of items) {
+      let shouldShow = true;
+
+      if (hasYears) {
+        const itemYear = parseInt(item.dataset.year, 10);
+        const isFullRange = state.yearRange.min === minYear &&
+          state.yearRange.max === maxYear;
+        const yearPasses = isFullRange
+          ? true
+          : (!isNaN(itemYear) && itemYear >= state.yearRange.min &&
+            itemYear <= state.yearRange.max);
+        shouldShow = yearPasses;
+      }
+
+      if (shouldShow && activeCategories.length > 0) {
+        const results = activeCategories.map(([cat, { logic, selected }]) => {
+          const raw = item.dataset[cat] ?? "";
+          const vals = new Set(raw.trim().split(/\s+/).filter(Boolean));
+          return logic === "and"
+            ? [...selected].every((v) => vals.has(v))
+            : [...selected].some((v) => vals.has(v));
+        });
+
+        const catShouldShow = state.globalLogic === "and"
+          ? results.every(Boolean)
+          : results.some(Boolean);
+
+        shouldShow = catShouldShow;
+      }
+
+      if (shouldShow && item.hidden) toShow.push(item);
+      else if (!shouldShow && !item.hidden) toHide.push(item);
+    }
+
+    const visibleCount = items.filter(
+      (item) => !toHide.includes(item) && !item.hidden || toShow.includes(item),
+    ).length;
+
+    updateResultCount(visibleCount);
+
+    const isYearModified = hasYears &&
+      (state.yearRange.min !== minYear || state.yearRange.max !== maxYear);
+    const hasActiveCategories = activeCategories.length > 0;
+
+    animateFilterChanges(
+      toShow,
+      toHide,
+      visibleCount,
+      isYearModified,
+      hasActiveCategories,
+    );
+  }
+
+  // animate filter changes
+
+  function animateFilterChanges(
+    toShow,
+    toHide,
+    visibleCount,
+    isYearModified,
+    hasActiveCategories,
+  ) {
+    const shouldShowEmpty = visibleCount === 0 &&
+      (hasActiveCategories || isYearModified);
+
+    // flip: snapshot "first" positions of items staying visible
+    const stayers = items.filter(
+      (item) =>
+        !item.hidden && !toHide.includes(item) && !toShow.includes(item),
+    );
+    const firstPositions = new Map(
+      stayers.map((item) => [item, item.getBoundingClientRect()]),
+    );
+
+    // step 1: fade out items being hidden
+    toHide.forEach((item) => item.classList.add("is-filter-hiding"));
+
+    if (!shouldShowEmpty && emptyStateEl.classList.contains("is-visible")) {
+      emptyStateEl.classList.remove("is-visible");
+    }
+
+    const DURATION = 220;
+
+    setTimeout(() => {
+      // step 2: actually hide them & remove animation class
+      toHide.forEach((item) => {
+        item.hidden = true;
+        item.classList.remove("is-filter-hiding");
+      });
+
+      if (!shouldShowEmpty) {
+        emptyStateEl.hidden = true;
+      }
+
+      // step 3: show items, initially invisible
+      toShow.forEach((item) => {
+        item.hidden = false;
+        item.classList.add("is-filter-showing");
+      });
+
+      if (shouldShowEmpty) {
+        emptyStateEl.hidden = false;
+      }
+
+      // step 4: recalculate layout: Macy sets new top/left on all visible items
+      globalThis.macyInstance?.recalculate(true);
+
+      // flip: compute deltas and apply inverted transforms instantly (no transition)
+      const isFixedHeight = gallery.dataset.galleryStyle === "fixed-height";
+
+      stayers.forEach((item) => {
+        const first = firstPositions.get(item);
+        const last = item.getBoundingClientRect();
+        const dx = first.left - last.left;
+        const dy = first.top - last.top;
+
+        if (isFixedHeight) {
+          // for fixed-height+cover, scale() would warp the already-reflowed
+          // object-fit: cover pixels. use clip-path to mask the size change
+          // without distorting image content.
+          const clipRight = Math.max(0, last.width - first.width);
+          const clipBottom = Math.max(0, last.height - first.height);
+
+          if (
+            Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5 || clipRight > 1 ||
+            clipBottom > 1
+          ) {
+            item.style.transition = "none";
+            item.style.transform = `translate(${dx}px, ${dy}px)`;
+            item.style.clipPath =
+              `inset(0 ${clipRight}px ${clipBottom}px 0 round 0px)`;
+          }
+        } else {
+          const sx = first.width / (last.width || 1);
+          const sy = first.height / (last.height || 1);
+
+          if (
+            Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5 ||
+            Math.abs(sx - 1) > 0.01 || Math.abs(sy - 1) > 0.01
+          ) {
+            item.style.transition = "none";
+            item.style.transformOrigin = "top left";
+            item.style.transform =
+              `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
+          }
+        }
+      });
+
+      // step 5: play: release transforms & fade-in new items simultaneously
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          stayers.forEach((item) => {
+            if (item.style.transform || item.style.clipPath) {
+              item.style.transition = "";
+              item.style.transform = "";
+              item.style.clipPath = "";
+            }
+          });
+          toShow.forEach((item) => item.classList.remove("is-filter-showing"));
+
+          if (shouldShowEmpty) {
+            emptyStateEl.classList.add("is-visible");
+          }
+
+          setTimeout(() => {
+            stayers.forEach((item) => item.style.transformOrigin = "");
+          }, 300);
+        });
+      });
+    }, DURATION);
   }
 
   buildUI();
