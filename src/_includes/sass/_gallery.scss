@@ -169,12 +169,12 @@
     display: grid;
     grid-template-columns:
       repeat(
-      auto-fit,
-      minmax(
-        min(100%, var(--gallery-thumbnail-dimension)),
-        var(--gallery-thumbnail-dimension)
-      )
-    );
+        auto-fit,
+        minmax(
+          min(100%, var(--gallery-thumbnail-dimension)),
+          var(--gallery-thumbnail-dimension)
+        )
+      );
     justify-content: center;
     gap: $gallery-row-gap $gallery-column-gap;
     padding: $gallery-padding;

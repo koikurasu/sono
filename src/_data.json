@@ -11,6 +11,7 @@
     "generator": true
   },
   "base_url": "https://koikurasu.github.io/sono",
+  "mobile_menu": false,
   "gallery_style": "masonry-js",
   "image_fit": "contain",
   "gallery_aspect_ratio": "4/3",

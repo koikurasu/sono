@@ -1,10 +1,25 @@
-<header class="site-header">
+{{ if mobile_menu }}
+  <input type="checkbox" id="nav-toggle" class="nav-toggle-input" />
+{{ /if }}
+<header class="site-header{{ if mobile_menu }} mobile-menu-enabled{{ /if }}">
   <div class="site-title">
     <a href="/">{{ site }}</a>
   </div>
   <nav class="site-nav">
     {{ for page of search.pages("menu=true") }}
-    <a href="{{ page.url }}">{{ page.title }}</a>
+      <a href="{{ page.url }}">{{ page.title }}</a>
     {{ /for }}
   </nav>
 </header>
+{{ if mobile_menu }}
+  <label for="nav-toggle" class="nav-toggle-label" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </label>
+  <div class="mobile-nav-overlay">
+    <nav class="mobile-nav-links">
+      {{ for page of search.pages("menu=true") }}
+        <a href="{{ page.url }}">{{ page.title }}</a>
+      {{ /for }}
+    </nav>
+  </div>
+{{ /if }}

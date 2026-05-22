@@ -282,9 +282,6 @@
 
     max-height: 250px;
     overflow-y: auto;
-
-    // Fallback for non-anchor browsers (iOS Safari, Firefox)
-    // Position is set via JS using visualViewport offsets
     z-index: 9999;
 
     display: none;

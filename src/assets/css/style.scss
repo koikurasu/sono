@@ -1,7 +1,8 @@
 @use "sass/reset.scss";
 @use "sass/_fonts.scss";
 @use "sass/_theme_variables";
+@use "sass/_layout";
 @use "sass/_theme";
 @use "sass/_gallery_variables" as *;
 @use "sass/_gallery";
-@use "sass/_gallery-filter";
+@use "sass/_gallery_filter";
