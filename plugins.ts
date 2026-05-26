@@ -8,6 +8,7 @@ import picture from "lume/plugins/picture.ts";
 import transformImages from "lume/plugins/transform_images.ts";
 import imageSize from "lume/plugins/image_size.ts";
 import sass from "lume/plugins/sass.ts";
+import slugifyUrls from "lume/plugins/slugify_urls.ts";
 
 import "lume/types.ts";
 
@@ -30,6 +31,7 @@ export default function (userOptions?: Options) {
     site
       .use(sass())
       .use(lightningcss())
+      .use(slugifyUrls())
       .use(picture())
       .use(transformImages())
       .use(imageSize())
