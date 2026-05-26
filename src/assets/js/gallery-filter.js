@@ -51,9 +51,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  for (const [key, counts] of categoryMap.entries()) {
+    if (counts.size <= 1) {
+      categoryMap.delete(key);
+    }
+  }
+
   // if there's nothing to filter by, exit, otherwise
   // show the filter menu and button
-  const hasYears = minYear !== Infinity && maxYear !== -Infinity;
+  const hasYears = minYear !== Infinity && maxYear !== -Infinity &&
+    minYear !== maxYear;
   if (categoryMap.size === 0 && !hasYears) return;
 
   const trigger = document.getElementById("gallery-filter-trigger");
@@ -383,7 +390,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // tag management
-  
+
   function addTag(cat, value) {
     state.categories[cat].selected.add(value);
 
