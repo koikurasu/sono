@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!gallery || !panel) return;
 
   const items = [...gallery.querySelectorAll(".gallery-item")];
-  if (items.length === 0) return;
+  if (items.length <= 1) return;
 
   // global empty state (inserted after gallery)
   const emptyStateEl = document.createElement("div");
