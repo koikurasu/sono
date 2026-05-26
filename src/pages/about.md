@@ -15,6 +15,7 @@ A theme for [Lume](https://lume.land/) that turns a spreadsheet into an image ga
 - **Dynamic filtering** – Custom metadata columns automatically become interactive filters, including a year range slider.
 - **PhotoSwipe lightbox** – Click on any thumbnail to open the full image in a lightbox, with keyboard navigation, captions, zoom, and fullscreen support.
 - **Progressive enhancement** – The gallery works without JavaScript, with hover captions and direct image links as fallbacks.
+- **Subgalleries** – Easily create multiple gallery pages showing different subsets of your images.
 
 ## How it works
 

@@ -12,6 +12,7 @@ Detailed setup guides, manual configuration references, and troubleshooting are 
 - **Dynamic filtering** – Custom metadata columns automatically become interactive filters, including a year range slider.
 - **PhotoSwipe lightbox** – Click on any thumbnail to open the full image in a lightbox, with keyboard navigation, captions, zoom, and fullscreen support.
 - **Progressive enhancement** – The gallery works without JavaScript, with hover captions and direct image links as fallbacks.
+- **Subgalleries** – Easily create multiple gallery pages showing different subsets of your images.
 
 ## Requirements
 
@@ -76,8 +77,6 @@ For multiple values in one column, separate them with commas. For example, a cel
 ```text
 oil paint, portrait, 17th century
 ```
-
-Column names are lowercased and spaces replaced with hyphens, so `My Column` becomes `data-my-column`.
 
 ## Date format
 
