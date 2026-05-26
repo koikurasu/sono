@@ -7,14 +7,16 @@
   height="192"
   viewBox="0 0 24 24"
 >
-<style>
+  <style>
   path {
     fill: #111111;
   }
   @media (prefers-color-scheme: dark) {
-    path { fill: #ffffff; }
+    path {
+      fill: #ffffff;
+    }
   }
-</style>
+  </style>
   <!-- 
     MIT License
     Copyright (c) 2020 Arturo Wibawa
