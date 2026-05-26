@@ -125,6 +125,11 @@ cms.document({
       value: false,
     },
     {
+      name: "layout",
+      type: "hidden",
+      value: "layouts/base.vto",
+    },
+    {
       name: "gallery_style",
       label: "Gallery style",
       description:
@@ -207,7 +212,6 @@ cms.document({
   description: "Update gallery page title and description",
   store: "src:index.vto",
   fields: [
-    "layout: hidden",
     "title: text",
     "description: textarea",
   ],
@@ -237,7 +241,6 @@ cms.document({
   description: "Page shown when a requested page is not found.",
   store: "src:404.md",
   fields: [
-    "layout: hidden",
     "url: hidden",
     "title: text",
     {
