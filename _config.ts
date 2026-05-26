@@ -81,6 +81,53 @@ site.filter("year", (value: string | number | Date): number | string => {
   return match ? parseInt(match[0], 10) : "";
 });
 
+// filter gallery images
+site.filter(
+  "filterImages",
+  (images: Record<string, unknown>[], query: Record<string, unknown>) => {
+    if (!query) return images;
+
+    return images.filter((img) => {
+      return Object.entries(query).every(([key, value]) => {
+        if (key === "date") {
+          if (!img.date) return false;
+          const imgYear = parseInt(
+            String(img.date).match(/\d{3,4}/)?.[0] ?? "",
+          );
+          const queryValues = Array.isArray(value) ? value : [value];
+          return queryValues.some((qv: unknown) =>
+            imgYear === parseInt(String(qv))
+          );
+        }
+        if (key === "date_from") {
+          if (!img.date) return false;
+          const imgYear = parseInt(
+            String(img.date).match(/\d{3,4}/)?.[0] ?? "",
+          );
+          return imgYear >= parseInt(String(value));
+        }
+        if (key === "date_to") {
+          if (!img.date) return false;
+          const imgYear = parseInt(
+            String(img.date).match(/\d{3,4}/)?.[0] ?? "",
+          );
+          return imgYear <= parseInt(String(value));
+        }
+
+        const imgVal = img[key];
+        if (!imgVal) return false;
+        const values = typeof imgVal === "string"
+          ? imgVal.split(",").map((v: string) => v.trim())
+          : [String(imgVal)];
+        const queryValues = Array.isArray(value) ? value : [value];
+        return (queryValues as unknown[]).every((qv) =>
+          values.includes(String(qv))
+        );
+      });
+    });
+  },
+);
+
 site.use(plugins());
 
 // add image dimensions to image links for photoswipe

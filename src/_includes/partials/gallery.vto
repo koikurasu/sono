@@ -1,3 +1,4 @@
+{{ set visibleImages = images |> filterImages(query) }}
 <div
   class="gallery"
   id="gallery"
@@ -5,7 +6,7 @@
   data-image-fit="{{ image_fit }}"
   {{ if hover_captions }}data-hover-captions="true"{{ /if }}
 >
-  {{ for image of images }}
+  {{ for image of visibleImages }}
     {{ set meta = image |> extractMeta }}
     {{ set name = image.filename |> removeExt }}
     <figure
@@ -61,3 +62,18 @@
     </figure>
   {{ /for }}
 </div>
+
+<link rel="stylesheet" href="/assets/css/vendor/photoswipe.css">
+<link
+  rel="stylesheet"
+  href="/assets/css/vendor/photoswipe-dynamic-caption-plugin.css"
+>
+
+{{ if gallery_style === "masonry-js" }}
+  <script src="/assets/js/vendor/macy.js"></script>
+  <script src="/assets/js/gallery-masonry.js"></script>
+{{ /if }}
+<script type="module" src="/assets/js/gallery-lightbox.js"></script>
+
+{{ include "partials/gallery-filter.vto" }}
+<script src="/assets/js/gallery-filter.js"></script>

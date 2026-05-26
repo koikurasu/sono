@@ -1,21 +1,7 @@
 ---
 layout: layouts/base.vto
 title: Archive
+query: null
 ---
 
-{{ include "partials/gallery.vto" }}
-
-<link rel="stylesheet" href="/assets/css/vendor/photoswipe.css">
-<link
-  rel="stylesheet"
-  href="/assets/css/vendor/photoswipe-dynamic-caption-plugin.css"
->
-
-{{ if gallery_style === "masonry-js" }}
-  <script src="/assets/js/vendor/macy.js"></script>
-  <script src="/assets/js/gallery-masonry.js"></script>
-{{ /if }}
-<script type="module" src="/assets/js/gallery-lightbox.js"></script>
-
-{{ include "partials/gallery-filter.vto" }}
-<script src="/assets/js/gallery-filter.js"></script>
+{{ include "partials/gallery.vto" { query: query } }}
