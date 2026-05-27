@@ -20,7 +20,7 @@ jobs:
       - name: Fetch demo images
         run: |
           curl -L https://github.com/koikurasu/sono/releases/download/demo-assets/images.zip -o /tmp/images.zip
-          unzip /tmp/images.zip -d src/assets/
+          unzip -o /tmp/images.zip -d src/assets/
           curl -L https://github.com/koikurasu/sono/releases/download/demo-assets/images.ods -o src/_data/images.ods
 
       - name: Restore Lume cache
