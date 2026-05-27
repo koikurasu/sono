@@ -21,6 +21,7 @@ jobs:
         run: |
           curl -L https://github.com/koikurasu/sono/releases/download/demo-assets/images.zip -o /tmp/images.zip
           unzip /tmp/images.zip -d src/assets/
+          curl -L https://github.com/koikurasu/sono/releases/download/demo-assets/images.ods -o src/_data/images.ods
 
       - name: Restore Lume cache
         uses: actions/cache@v4
