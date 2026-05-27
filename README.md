@@ -1,6 +1,6 @@
 # Soño
 
-An image gallery theme for [Lume](https://lume.land/).
+An image gallery theme for [Lume](https://lume.land/). See a live preview at [https://koikurasu.github.io/sono/](https://koikurasu.github.io/sono/).
 
 Detailed setup guides, manual configuration references, and troubleshooting are available in the [wiki](https://github.com/koikurasu/sono/wiki).
 
@@ -23,6 +23,8 @@ Detailed setup guides, manual configuration references, and troubleshooting are 
 ```sh
 git clone https://github.com/koikurasu/sono.git my-gallery
 cd my-gallery
+
+# Start the development server with live reload and LumeCMS
 deno task serve
 ```
 
@@ -54,7 +56,7 @@ Your site's configuration is managed through a few key files:
 - `src/_includes/sass/_gallery_variables.scss` for gallery-specific dimensions and styling.
 - `src/_includes/sass/_theme_variables.scss` for site-wide colors and typography.
 
-The easiest way to configure your site is to use the **LumeCMS** interface. Start the development server (see step 4) and navigate to `http://localhost:3000/admin`. The CMS provides a user-friendly interface to edit all metadata, gallery settings, and CSS variables directly in your browser, with explanations for each option. For manual configuration details without the CMS, refer to the [GitHub Wiki](https://github.com/koikurasu/sono/wiki).
+The easiest way to configure your site is to use the **LumeCMS** interface. Start the development server (see step 4) and navigate to `http://localhost:3000/admin`. The CMS provides a user-friendly interface to edit all metadata, gallery settings, and CSS variables directly in your browser, with explanations for each option. For manual configuration details without the CMS and more advanced options, refer to the [wiki](https://github.com/koikurasu/sono/wiki).
 
 ### 4. Build or serve
 
@@ -66,7 +68,7 @@ deno task serve
 deno task build
 ```
 
-Output goes to `_site/`.
+Output goes to `_site/`. After configuring the site and adding images, build the production site using `deno task build` then upload the contents of the `_site/` folder to your hosting provider. For more information about building and deploying sites with Lume see the [Lume documentation](https://lume.land/docs/advanced/deployment/).
 
 ## Custom metadata
 
