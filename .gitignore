@@ -1,5 +1,3 @@
 _site
 _cache
 .DS_Store
-src/assets/images/gallery/*
-!src/assets/images/gallery/_data.ts
