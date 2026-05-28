@@ -36,8 +36,8 @@ All thumbnails share a fixed height and are filled row by row; widths vary with 
 
 <figure>
     <div class="one-row-gallery" style="--row-height: 300px;">
-        <img src="/assets/images/other/fixedheightcover.jpg" alt="Image gallery. Images are organized by row, with the left and right sides flushed to the container edges." />
-        <img src="/assets/images/other/fixedheightcontain.jpg" alt="Image gallery. Images are the same height and scaled down to fit available space." />
+        <img src="https://koikurasu.github.io/sono/assets/images/other/fixedheightcover.jpg" alt="Image gallery. Images are organized by row, with the left and right sides flushed to the container edges." />
+        <img src="https://koikurasu.github.io/sono/assets/images/other/fixedheightcontain.jpg" alt="Image gallery. Images are the same height and scaled down to fit available space." />
     </div>
     <figcaption><strong>left:</strong> <code>"gallery_style": "fixed-height"</code>, <code>"image_fit": "cover"</code>, <code>$gallery-row-gap</code> and <code>$gallery-column-gap: 10px</code>. <strong>right:</strong> <code>"gallery_style": "fixed-height"</code>, <code>"image_fit": "contain"</code>, <code>$gallery-row-gap</code> and <code>$gallery-column-gap: 10px</code>, <code>$gallery-justify-content: flex-start</code>. </figcaption>
 </figure>
@@ -48,8 +48,8 @@ Fixed width and height; images are cropped or letterboxed to fill their cell.
 
 <figure>
     <div class="one-row-gallery" style="--row-height: 300px;">
-        <img src="/assets/images/other/gridcover.jpg" alt="Image gallery. Thumbnails are cropped to squares of the same size and displayed in a grid." />
-        <img src="/assets/images/other/gridcontain.jpg" alt="Image gallery. Image containers are displayed in a grid, with thumbnails scaled down to fit." />
+        <img src="https://koikurasu.github.io/sono/assets/images/other/gridcover.jpg" alt="Image gallery. Thumbnails are cropped to squares of the same size and displayed in a grid." />
+        <img src="https://koikurasu.github.io/sono/assets/images/other/gridcontain.jpg" alt="Image gallery. Image containers are displayed in a grid, with thumbnails scaled down to fit." />
     </div>
     <figcaption><strong>left:</strong> <code>"gallery_style": "grid"</code>, <code>"image_fit": "cover"</code>, <code>"gallery_aspect_ratio": "1/1"</code>, <code>$gallery-row-gap</code> and <code>$gallery-column-gap: 10px</code>. <strong>right:</strong> <code>"gallery_style": "grid"</code>, <code>"image_fit": "contain"</code>, <code>"gallery_aspect_ratio": "4/3"</code>, <code>$gallery-row-gap: 90px</code>, <code>$gallery-column-gap: 80px</code>. </figcaption>
 </figure>
@@ -59,7 +59,7 @@ Fixed width and height; images are cropped or letterboxed to fill their cell.
 Fixed width, variable height. Images flow top-to-bottom within each column before moving to the next. Note that the spacing between columns cannot be controlled.
 
 <figure>
-    <img src="/assets/images/other/masonrycss.jpg" alt="Image gallery. Images are organized by columns." />
+    <img src="https://koikurasu.github.io/sono/assets/images/other/masonrycss.jpg" alt="Image gallery. Images are organized by columns." />
     <figcaption><code>"gallery_style": "masonry-css"</code>, <code>$gallery-row-gap: 50px</code>.</figcaption>
 </figure>
 
@@ -68,7 +68,7 @@ Fixed width, variable height. Images flow top-to-bottom within each column befor
 Fixed width, variable height. Images fill across rows. Requires JavaScript; falls back to CSS masonry if scripting is unavailable.
 
 <figure>
-    <img src="/assets/images/other/masonryjs.jpg" alt="Image gallery. Images are organized by columns." />
+    <img src="https://koikurasu.github.io/sono/assets/images/other/masonryjs.jpg" alt="Image gallery. Images are organized by columns." />
     <figcaption><code>"gallery_style": "masonry-js"</code>, <code>$gallery-row-gap</code> and <code>$gallery-column-gap: 20px</code>.</figcaption>
 </figure>
 
