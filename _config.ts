@@ -11,7 +11,6 @@ const { lightbox_dimension, remove_originals } = siteData;
 
 const site = lume({
   src: "./src",
-  location: new URL(siteData.base_url),
 });
 
 site.remoteFile(

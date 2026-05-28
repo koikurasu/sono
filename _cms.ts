@@ -110,13 +110,6 @@ cms.document({
       ],
     },
     {
-      name: "base_url",
-      label: "Base URL",
-      description:
-        "The complete base URL of your site (e.g. https://username.github.io/repo-name). This is required for proper asset linking when deploying to a subdirectory.",
-      type: "text",
-    },
-    {
       name: "mobile_menu",
       label: "Mobile menu",
       description:

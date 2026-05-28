@@ -10,7 +10,6 @@
     "lang": "=lang",
     "generator": true
   },
-  "base_url": "https://koikurasu.github.io/sono",
   "mobile_menu": false,
   "layout": "layouts/base.vto",
   "gallery_style": "masonry-js",
