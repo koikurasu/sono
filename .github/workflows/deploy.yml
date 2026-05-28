@@ -36,7 +36,7 @@ jobs:
           cache: true
 
       - name: Build site
-        run: deno task build
+        run: deno task build --location=https://koikurasu.github.io/sono
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
