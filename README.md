@@ -20,13 +20,33 @@ Detailed setup guides, manual configuration references, and troubleshooting are 
 
 ## Installation
 
+There are two ways to get started:
+
+### Option A: Lume init command
+
 ```sh
-git clone https://github.com/koikurasu/sono.git my-gallery
-cd my-gallery
+# Initialize a new Lume site with the Soño theme
+deno run -A https://lume.land/init.ts --theme=sono my-gallery
 
 # Start the development server with live reload and LumeCMS
+cd my-gallery
 deno task serve
 ```
+
+This initializes a new Lume site using the Soño theme with only the necessary configuration files. Updating to a new version of the theme can be done by running `deno task lume upgrade`.
+
+### Option B: Clone the full repository
+
+```sh
+# Clone the full repository into a new directory
+git clone https://github.com/koikurasu/sono.git my-gallery
+
+# Start the development server with live reload and LumeCMS
+cd my-gallery
+deno task serve
+```
+
+This downloads the full source code. If you don't have Git installed, you can [download the archive](https://github.com/koikurasu/sono/archive/refs/heads/main.zip) instead. For users who want to use Soño as a base for a more customized site.
 
 ## Getting started
 
