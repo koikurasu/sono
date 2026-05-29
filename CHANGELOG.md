@@ -25,5 +25,6 @@ Updated to improve experience when installing theme using `deno run -A https://l
 ## [0.1.0] - 2026-05-27
 First version
 
+[0.1.2]: https://github.com/koikurasu/sono/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/koikurasu/sono/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/koikurasu/sono/releases/tag/v0.1.0
