@@ -72,7 +72,7 @@ body:has(.nav-toggle-input:checked) {
   inset: 0;
   z-index: 1000;
   isolation: isolate;
-  background-color: var(--page-bg);
+  background-color: $page-bg;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -95,7 +95,7 @@ body:has(.nav-toggle-input:checked) {
 }
 
 .mobile-nav-overlay .mobile-nav-links a {
-  color: var(--page-text);
+  color: $page-text;
   text-decoration: none;
 }
 
@@ -144,9 +144,9 @@ body:not(.page-home) {
   @media screen and (max-width: ($page-max-width + 13rem)) {
     .site-header {
       mix-blend-mode: normal;
-      background-color: color-mix(in oklch, var(--page-bg) 75%, transparent);
+      background-color: color-mix(in oklch, $page-bg 75%, transparent);
       backdrop-filter: blur(10px) saturate(180%);
-      color: var(--page-text);
+      color: $page-text;
     }
   }
 }

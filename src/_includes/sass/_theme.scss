@@ -2,21 +2,22 @@
 @use "theme_variables" as *;
 
 html {
-  background-color: var(--page-bg);
+  color-scheme: light dark;
+  background-color: $page-bg;
 }
 
 body {
-  background-color: var(--page-bg);
+  background-color: $page-bg;
   min-height: 100dvh;
-  color: var(--page-text);
-  font-family: var(--font-family-base);
+  color: $page-text;
+  font-family: $font-family-base;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 main {
   padding: 0 2rem 2rem;
-  max-width: var(--page-max-width);
+  max-width: $page-max-width;
   margin-inline: auto;
 }
 
@@ -35,7 +36,7 @@ main {
 }
 
 a {
-  color: var(--link-color);
+  color: $link-color;
   text-decoration-thickness: 2px;
 
   &:hover,
@@ -47,8 +48,8 @@ a {
 
 code, kbd {
   background-color: light-dark(
-    color-mix(in oklch, var(--page-text) 8%, transparent),
-    color-mix(in oklch, var(--page-text) 15%, transparent)
+    color-mix(in oklch, $page-text 8%, transparent),
+    color-mix(in oklch, $page-text 15%, transparent)
   );
   border-radius: 6px;
   padding: 2px 4px;
@@ -60,8 +61,8 @@ pre {
   padding: 1.25rem;
   overflow-x: auto;
   background-color: light-dark(
-    color-mix(in oklch, var(--page-text) 4%, transparent),
-    color-mix(in oklch, var(--page-text) 8%, transparent)
+    color-mix(in oklch, $page-text 4%, transparent),
+    color-mix(in oklch, $page-text 8%, transparent)
   );
   border-radius: 8px;
   margin: 1.5rem 0;
@@ -90,7 +91,7 @@ table {
     padding: 0.75rem 1rem;
     text-align: left;
     border-bottom: 1px solid
-      color-mix(in oklch, var(--page-text) 10%, transparent);
+      color-mix(in oklch, $page-text 10%, transparent);
     word-break: break-word;
     overflow-wrap: break-word;
     min-width: 100px;
@@ -101,16 +102,16 @@ table {
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-size: 0.8rem;
-    color: color-mix(in oklch, var(--page-text) 60%, transparent);
-    border-bottom: 2px solid var(--page-text);
+    color: color-mix(in oklch, $page-text 60%, transparent);
+    border-bottom: 2px solid $page-text;
   }
 
   tr:hover td {
-    background-color: color-mix(in oklch, var(--page-text) 3%, transparent);
+    background-color: color-mix(in oklch, $page-text 3%, transparent);
   }
 
   code {
-    background-color: color-mix(in oklch, var(--page-text) 5%, transparent);
+    background-color: color-mix(in oklch, $page-text 5%, transparent);
     padding: 0.2em 0.4em;
     border-radius: 4px;
     font-size: 0.85em;
@@ -164,12 +165,12 @@ form {
 }
 
 form legend {
-  font-family: var(--font-family-base);
+  font-family: $font-family-base;
   font-size: 1.1rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--page-text);
+  color: $page-text;
   margin-bottom: 1.5rem;
   padding: 0;
   width: 100%;
@@ -183,12 +184,12 @@ form div {
 }
 
 form label {
-  font-family: var(--font-family-base);
+  font-family: $font-family-base;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--page-text);
+  color: $page-text;
   opacity: 0.8;
 }
 
@@ -217,10 +218,10 @@ form textarea {
   width: 100%;
   box-sizing: border-box;
   padding: 0.75rem 1rem;
-  font-family: var(--font-family-base);
+  font-family: $font-family-base;
   font-size: 0.875rem;
-  color: var(--page-text);
-  background-color: color-mix(in oklch, var(--page-text) 5%, transparent);
+  color: $page-text;
+  background-color: color-mix(in oklch, $page-text 5%, transparent);
   border-radius: 6px;
   border: none;
   outline: none;
@@ -231,22 +232,22 @@ form input[type="text"]::placeholder,
 form input[type="email"]::placeholder,
 form textarea::placeholder {
   opacity: 0.35;
-  color: var(--page-text);
+  color: $page-text;
 }
 
 form input[type="text"]:hover,
 form input[type="email"]:hover,
 form select:hover,
 form textarea:hover {
-  background-color: color-mix(in oklch, var(--page-text) 7%, transparent);
+  background-color: color-mix(in oklch, $page-text 7%, transparent);
 }
 
 form input[type="text"]:focus,
 form input[type="email"]:focus,
 form select:focus,
 form textarea:focus {
-  background-color: color-mix(in oklch, var(--page-text) 10%, transparent);
-  outline: 2px solid color-mix(in oklch, var(--page-text) 40%, transparent);
+  background-color: color-mix(in oklch, $page-text 10%, transparent);
+  outline: 2px solid color-mix(in oklch, $page-text 40%, transparent);
   outline-offset: 3px;
 }
 
@@ -266,14 +267,14 @@ form select {
 }
 
 form select option {
-  background: var(--page-bg);
-  color: var(--page-text);
+  background: $page-bg;
+  color: $page-text;
 }
 
 form input[type="checkbox"],
 form input[type="radio"] {
   appearance: none;
-  background-color: color-mix(in oklch, var(--page-text) 5%, transparent);
+  background-color: color-mix(in oklch, $page-text 5%, transparent);
   margin: 0;
   font: inherit;
   color: currentColor;
@@ -289,7 +290,7 @@ form input[type="radio"] {
 
 form input[type="checkbox"]:hover,
 form input[type="radio"]:hover {
-  background-color: color-mix(in oklch, var(--page-text) 7%, transparent);
+  background-color: color-mix(in oklch, $page-text 7%, transparent);
 }
 
 form input[type="checkbox"]::before {
@@ -298,13 +299,13 @@ form input[type="checkbox"]::before {
   height: 0.65em;
   transform: scale(0);
   transition: 120ms transform ease-in-out;
-  background-color: var(--page-bg);
+  background-color: $page-bg;
   clip-path: polygon(14% 44%, 0 58%, 38% 96%, 100% 23%, 86% 9%, 38% 68%);
 }
 
 form input[type="checkbox"]:checked,
 form input[type="radio"]:checked {
-  background-color: var(--page-text);
+  background-color: $page-text;
 }
 
 form input[type="checkbox"]:checked::before {
@@ -319,7 +320,7 @@ form input[type="radio"]::before {
   content: "";
   transform: scale(0);
   transition: 120ms transform ease-in-out;
-  background-color: var(--page-bg);
+  background-color: $page-bg;
   border-radius: 50%;
   width: 0.55em;
   height: 0.55em;
@@ -336,8 +337,8 @@ form button {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 0.75rem 1.5rem;
-  background: color-mix(in oklch, var(--page-text) 5%, transparent);
-  color: var(--page-text);
+  background: color-mix(in oklch, $page-text 5%, transparent);
+  color: $page-text;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -346,10 +347,10 @@ form button {
 }
 
 form button:hover {
-  background: color-mix(in oklch, var(--page-text) 10%, transparent);
+  background: color-mix(in oklch, $page-text 10%, transparent);
 }
 
 form button:active {
-  background: var(--page-text);
-  color: var(--page-bg);
+  background: $page-text;
+  color: $page-bg;
 }

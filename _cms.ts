@@ -113,7 +113,7 @@ cms.document({
       name: "mobile_menu",
       label: "Mobile menu",
       description:
-        "Enable a hamburger-style mobile navigation menu on small screens. Recommended if you have many non-gallery page.",
+        "Enable a hamburger-style mobile navigation menu on small screens. Recommended if you have many pages listed in the header.",
       type: "checkbox",
       value: false,
     },
@@ -247,8 +247,8 @@ cms.document({
 
 cms.document({
   name: "css_variables_gallery",
-  label: "Gallery CSS variables",
-  description: "CSS variables for the image gallery",
+  label: "Gallery SCSS variables",
+  description: "SCSS variables for the image gallery",
   store: "src:_includes/sass/_gallery_variables.scss",
   fields: [
     "content: code",
@@ -257,8 +257,8 @@ cms.document({
 
 cms.document({
   name: "css_variables_theme",
-  label: "Theme CSS variables",
-  description: "CSS variables for the site colors and theme",
+  label: "Theme SCSS variables",
+  description: "SCSS variables for the site colors and theme",
   store: "src:_includes/sass/_theme_variables.scss",
   fields: [
     "content: code",
