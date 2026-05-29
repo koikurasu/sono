@@ -21,7 +21,7 @@ A theme for [Lume](https://lume.land/) that turns a spreadsheet into an image ga
 
 1. **Add images** to the `src/assets/images/gallery/` folder.
 2. **Fill in the spreadsheet.** Open `src/_data/images.ods` and add a row for each image.
-3. **Configure the theme** by running `lume -s` and navigating to `http://localhost:3000/admin`. You can tweak layout and style options directly in the UI.
+3. **Configure the theme** by running `deno task serve` and navigating to `http://localhost:3000/admin`. You can tweak layout and style options directly in the UI.
 4. **Build and deploy.** Run `lume` to build the static site in the `_site/` folder.
 
 Thumbnails and lightbox images are generated automatically at build time and cached for future builds.
@@ -103,15 +103,15 @@ The date column drives a range slider, so visitors can browse by year.
 You\'ll need [Deno](https://deno.com/) 2.x or later installed.
 
 ```bash
-# Clone the repository
-git clone https://github.com/koikurasu/sono.git
-cd sono
+# Initialize a new Lume site with the Soño theme in "my-gallery" folder
+deno run -A https://lume.land/init.ts --theme=sono my-gallery
 
-# Start a local development server
+# Start the development server with live reload and LumeCMS
+cd my-gallery
 deno task serve
 ```
 
-Full setup instructions, configuration reference, and deployment guides are in the [README](https://github.com/koikurasu/sono#readme) and the [wiki](https://github.com/koikurasu/sono/wiki).
+Full setup instructions and configuration reference are in the [README](https://github.com/koikurasu/sono#readme) and the [wiki](https://github.com/koikurasu/sono/wiki).
 
 ## Licenses
 
