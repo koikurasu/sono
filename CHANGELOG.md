@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.1.2] - 2026-05-29
+
+### Changed
+- Used `site.add` instead of `site.remote` for adding remote files
+- Improved `removeGalleryOriginals` to also exclude originals from `site.files`
+
 ## [0.1.1] - 2026-05-28
 Updated to improve experience when installing theme using `deno run -A https://lume.land/init.ts --theme=sono`
 
