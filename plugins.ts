@@ -52,30 +52,29 @@ export default function (userOptions?: Options) {
   const options = merge(defaults, userOptions);
 
   return (site: Lume.Site) => {
-    // Remote files for vendor dependencies
-    site.remoteFile(
-      "/assets/css/vendor/photoswipe.css",
+    site.add(
       "https://cdn.jsdelivr.net/npm/photoswipe@5/dist/photoswipe.css",
+      "/assets/css/vendor/photoswipe.css",
     );
-    site.remoteFile(
+    site.add(
+      "https://cdn.jsdelivr.net/npm/photoswipe-dynamic-caption-plugin/photoswipe-dynamic-caption-plugin.css",
       "/assets/css/vendor/photoswipe-dynamic-caption-plugin.css",
-      "https://unpkg.com/photoswipe-dynamic-caption-plugin/photoswipe-dynamic-caption-plugin.css",
     );
-    site.remoteFile(
-      "/assets/js/vendor/macy.js",
+    site.add(
       "https://cdn.jsdelivr.net/npm/macy@2",
+      "/assets/js/vendor/macy.js",
     );
-    site.remoteFile(
-      "/assets/js/vendor/photoswipe-lightbox.esm.js",
+    site.add(
       "https://cdn.jsdelivr.net/npm/photoswipe@5/dist/photoswipe-lightbox.esm.js",
+      "/assets/js/vendor/photoswipe-lightbox.esm.js",
     );
-    site.remoteFile(
+    site.add(
+      "https://cdn.jsdelivr.net/npm/photoswipe-dynamic-caption-plugin/photoswipe-dynamic-caption-plugin.esm.js",
       "/assets/js/vendor/photoswipe-dynamic-caption-plugin.esm.js",
-      "https://unpkg.com/photoswipe-dynamic-caption-plugin/photoswipe-dynamic-caption-plugin.esm.js",
     );
-    site.remoteFile(
-      "/assets/js/vendor/photoswipe.esm.js",
+    site.add(
       "https://cdn.jsdelivr.net/npm/photoswipe@5/dist/photoswipe.esm.js",
+      "/assets/js/vendor/photoswipe.esm.js",
     );
 
     // Register custom filters
@@ -227,15 +226,21 @@ export default function (userOptions?: Options) {
           const galleryPrefix = "/assets/images/gallery/";
           const suffixes = ["-thumbnail", "-thumbnail@2x", "-lightbox"];
 
-          for (let i = allPages.length - 1; i >= 0; i--) {
-            const url = allPages[i].data.url as string;
-            if (!url.startsWith(galleryPrefix)) continue;
-
+          function isOriginal(url: string | undefined): boolean {
+            if (!url?.startsWith(galleryPrefix)) return false;
             const base = url.replace(/\.[^.]+$/, "");
-            const isGenerated = suffixes.some((s) => base.endsWith(s));
+            return !suffixes.some((s) => base.endsWith(s));
+          }
 
-            if (!isGenerated) {
+          for (let i = allPages.length - 1; i >= 0; i--) {
+            if (isOriginal(allPages[i].data.url as string)) {
               allPages.splice(i, 1);
+            }
+          }
+
+          for (let i = site.files.length - 1; i >= 0; i--) {
+            if (isOriginal(site.files[i].data.url as string)) {
+              site.files.splice(i, 1);
             }
           }
         },
