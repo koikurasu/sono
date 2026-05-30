@@ -22,7 +22,7 @@ $gallery-padding-mobile: $gallery-padding !default;
 // border radius of gallery images
 $gallery-image-border-radius: 0px !default;
 
-// how much space should be between the images when image_fit is "contain" and gallery_style is "fixed-height"
+// how to align images when image_fit is "contain" and gallery_style is "fixed-height"
 // accepts any value that justify-content accepts
 // ex: flex-start, center, flex-end, space-between, space-around, space-evenly
 $gallery-justify-content: flex-start !default;
