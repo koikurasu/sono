@@ -156,6 +156,7 @@ export default function (userOptions?: Options) {
     site
       .use(sass())
       .use(lightningcss())
+      .use(basePath())
       .use(slugifyUrls())
       .use(picture())
       .use(transformImages())
@@ -246,7 +247,5 @@ export default function (userOptions?: Options) {
         },
       );
     }
-
-    site.use(basePath());
   };
 }
